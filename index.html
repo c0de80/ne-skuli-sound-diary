@@ -2,11 +2,11 @@
 <style>
   /* ============================================================
      TOKENS — deliberate single light world: brushed-aluminum
-     instrument panel (Apple-hardware register), not adaptive to
-     the viewer's dark-mode setting — painted explicitly on purpose.
-     Layout unchanged from the previous revision: hero → roadmap →
-     findings → diagnostics → next steps → devlog, reskinned as a
-     calm machined-metal surface instead of a dark screening room.
+     instrument panel (Apple-hardware register), painted explicitly,
+     not adaptive to the viewer's dark-mode setting.
+     LAYOUT — one instrument panel up top (where the sound is now +
+     days left), then "what I need from you", then how the work goes;
+     everything technical sits lower or behind "подробнее".
      ============================================================ */
   :root{
     --bg-top:        #EDEEF0;
@@ -62,6 +62,8 @@
   h1,h2,h3{ font-family:var(--font-display); font-weight:800; text-wrap:balance; margin:0; }
   p{ margin:0; }
 
+  .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
   .container{ max-width:760px; margin:0 auto; padding:0 28px; }
   .wide{ max-width:980px; }
 
@@ -84,11 +86,11 @@
   }
 
   /* ============================================================
-     HERO
+     HERO — title as a header + the status panel
      ============================================================ */
   .hero{
     position:relative;
-    padding:56px 0 0;
+    padding:44px 0 0;
     overflow:hidden;
     background:
       radial-gradient(60% 55% at 82% -10%, rgba(44,110,147,0.09), transparent 60%),
@@ -103,7 +105,7 @@
   .hero-inner{ position:relative; z-index:2; }
 
   /* ---- volumetric glass title: layered spans over a soft moving backdrop ---- */
-  .title-stage{ position:relative; margin:16px 0 0; width:fit-content; max-width:100%; }
+  .title-stage{ position:relative; margin:14px 0 0; width:fit-content; max-width:100%; }
   .title-glow-bg{
     position:absolute;
     left:-18%; right:-18%; top:-85%; bottom:-35%;
@@ -124,7 +126,7 @@
   .film-title{
     position:relative; z-index:1;
     display:grid;
-    font-size:clamp(46px, 11vw, 100px);
+    font-size:clamp(38px, 7vw, 66px);
     line-height:0.92;
     letter-spacing:-.01em;
   }
@@ -160,50 +162,86 @@
     animation:sheenDrift 10s linear infinite;
   }
   @keyframes sheenDrift{ 0%{ background-position:0% 0; } 100%{ background-position:-280% 0; } }
-  .hero-sub{
-    margin:18px 0 0;
-    max-width:480px;
-    font-size:16.5px;
-    color:var(--ink-muted);
-  }
-  .meta-row{
-    display:flex; flex-wrap:wrap; gap:26px;
-    margin:26px 0 0;
-    padding:16px 0;
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-  }
-  .meta-item{ display:flex; flex-direction:column; gap:4px; }
-  .meta-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
-  .meta-value{ font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--ink); }
 
-  .countdown{
-    margin:22px 0 0;
-    display:inline-flex; flex-direction:column; gap:8px;
-  }
-  .countdown-label{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:.07em; color:var(--ink-faint); text-transform:uppercase; }
-  .countdown-digits{
-    display:flex; align-items:baseline; gap:8px;
+  /* ---- status panel: the one thing to read ---- */
+  .status-panel{
+    margin:30px 0 0;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:24px 0;
+    align-items:end;
     background:var(--surface);
     border:1px solid var(--line);
-    border-radius:10px;
-    padding:10px 16px;
-    box-shadow:inset 0 1px 0 var(--bevel-hi), 0 1px 3px var(--bevel-lo);
+    border-radius:22px;
+    padding:28px 34px 30px;
+    box-shadow:var(--shadow-lift), inset 0 1px 0 var(--bevel-hi);
   }
-  .cd-block{ display:flex; align-items:baseline; gap:5px; }
-  .cd-num{
-    font-family:var(--font-mono); font-weight:600;
-    font-size:clamp(24px,4vw,34px);
+  .status-main{ min-width:0; padding-right:40px; }
+  .status-kicker{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  .status-big{
+    margin-top:6px;
+    font-family:var(--font-display); font-weight:800;
+    font-size:clamp(40px, 6.2vw, 68px);
+    line-height:1;
+    letter-spacing:-.01em;
+    color:var(--ink);
+  }
+  .status-big span{ color:var(--ink-faint); font-weight:600; }
+
+  .segments{
+    list-style:none; margin:22px 0 0; padding:0;
+    display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:6px;
+  }
+  .seg{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+  .seg-bar{
+    position:relative; height:12px; border-radius:7px; overflow:hidden;
+    background:var(--surface-raised);
+    box-shadow:inset 0 1px 2px var(--bevel-lo);
+  }
+  .seg.done .seg-bar{ background:linear-gradient(90deg, var(--accent), var(--accent-strong)); box-shadow:none; }
+  .seg.active .seg-bar::before{
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    width:var(--fill, 50%); border-radius:7px;
+    background:linear-gradient(90deg, var(--accent-dim), var(--accent));
+  }
+  .seg.active .seg-bar::after{
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    width:var(--fill, 50%); border-radius:7px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+    background-size:45% 100%; background-repeat:no-repeat;
+    animation:segShimmer 2.6s ease-in-out infinite;
+  }
+  @keyframes segShimmer{ 0%{ background-position:-60% 0; } 100%{ background-position:170% 0; } }
+  .seg-label{ font-size:12px; line-height:1.25; color:var(--ink-faint); }
+  .seg.done .seg-label{ color:var(--ink-muted); }
+  .seg.active .seg-label{ color:var(--accent-strong); font-weight:600; }
+
+  .status-now{
+    margin-top:20px; max-width:560px;
+    font-size:clamp(16px, 1.8vw, 19px); line-height:1.45;
+    color:var(--ink);
+  }
+
+  .status-days{
+    padding-left:34px;
+    border-left:1px solid var(--line);
+    text-align:right;
+  }
+  .days-num{
+    font-family:var(--font-display); font-weight:800;
+    font-size:clamp(52px, 7vw, 84px); line-height:.95;
     color:var(--accent-strong);
     font-variant-numeric:tabular-nums;
   }
-  .cd-unit{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
-  .cd-colon{ font-family:var(--font-mono); font-size:22px; color:var(--ink-faint); transform:translateY(-2px); }
+  .days-label{ margin-top:8px; font-size:15px; color:var(--ink); }
+  .days-date{ margin-top:2px; font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
 
   .hero-wave{
     position:relative; z-index:1;
-    height:96px;
-    margin-top:32px;
+    height:64px;
+    margin-top:30px;
     display:flex; align-items:flex-end; gap:2.5px;
     padding:0 28px;
     max-width:1400px; margin-left:auto; margin-right:auto;
@@ -226,9 +264,9 @@
      SECTIONS (shared rhythm)
      ============================================================ */
   main{ position:relative; }
-  .section{ padding:56px 0; }
+  .section{ padding-block:52px; }
   .section-title{
-    margin:8px 0 0;
+    margin:0;
     font-size:clamp(23px,3.4vw,32px);
     line-height:1.15;
   }
@@ -250,159 +288,50 @@
   }
 
   /* ============================================================
-     VIEW PANELS (report / devlog — switched by quiet links, not tabs)
+     WHAT I NEED FROM YOU
      ============================================================ */
-  .view-panel{ display:none; }
-  .view-panel.active{ display:block; }
-
-  /* ============================================================
-     STATUS BAND — the one glanceable line (replaces "read the
-     stepper to find out where we are")
-     ============================================================ */
-  .status-band{ padding:30px 0 6px; }
-  .status-kicker{
-    font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint);
-  }
-  .status-line{
-    margin-top:8px;
-    font-family:var(--font-display); font-weight:700;
-    font-size:clamp(20px,3vw,27px);
-    color:var(--ink);
-  }
-  .status-line strong{ color:var(--accent-strong); }
-  .status-track{
-    margin-top:17px; max-width:420px;
-    height:10px; border-radius:6px;
-    background:var(--surface-raised);
-    box-shadow:inset 0 1px 2px var(--bevel-lo);
-    overflow:hidden;
-  }
-  .status-fill{
-    height:100%; width:var(--sw,0%); border-radius:6px;
-    background:linear-gradient(90deg, var(--accent-dim), var(--accent-strong));
-  }
-
-  /* ============================================================
-     DETAILS TOGGLE (progressive disclosure for technical blocks)
-     ============================================================ */
-  .details-toggle{
-    margin-top:18px;
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
-    color:var(--accent-strong);
-    background:var(--surface); border:1px solid var(--line);
-    padding:9px 16px; border-radius:20px;
-    cursor:pointer;
-    box-shadow:inset 0 1px 0 var(--bevel-hi);
-    transition:border-color .2s, background .2s;
-  }
-  .details-toggle:hover{ border-color:var(--accent-dim); background:var(--surface-raised); }
-  .details-toggle .chev{ width:11px; height:11px; transition:transform .25s; }
-  .details-toggle[aria-expanded="true"] .chev{ transform:rotate(180deg); }
-
-  /* ============================================================
-     DEVLOG ENTRY / BACK LINK (quiet, not a tab)
-     ============================================================ */
-  .devlog-entry{ padding:4px 0 0; }
-  .devlog-link{
-    display:inline-flex; align-items:center; gap:10px;
-    background:none; border:none; cursor:pointer;
-    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
-    color:var(--ink-faint);
-    padding:8px 0;
-    transition:color .2s;
-  }
-  .devlog-link:hover{ color:var(--accent-strong); }
-  .devlog-count{ color:var(--ink-faint); font-size:10px; }
-  .back-link{
-    display:inline-flex; align-items:center; gap:6px;
-    background:none; border:none; cursor:pointer;
-    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
-    color:var(--accent-strong); padding:4px 0; margin-bottom:4px;
-  }
-  .back-link:hover{ color:var(--accent); }
-
-  /* ============================================================
-     DEVLOG
-     ============================================================ */
-  .devlog-list{
-    margin:24px 0 0; padding:0; list-style:none;
-    font-family:var(--font-mono); font-size:13px; line-height:1.7; color:var(--ink-muted);
-    counter-reset:devlog;
-    border-top:1px solid var(--line-soft);
-  }
-  .devlog-list li{
-    counter-increment:devlog;
-    padding:11px 4px 11px 44px;
-    border-bottom:1px solid var(--line-soft);
-    position:relative;
-  }
-  .devlog-list li::before{
-    content:counter(devlog, decimal-leading-zero);
-    position:absolute; left:4px; top:11px;
-    color:var(--accent-strong); font-weight:600;
-  }
-  .devlog-note{
+  .asks{ padding-top:44px; }
+  .ask-grid{
     margin-top:22px;
-    padding:14px 18px;
-    background:var(--surface-raised);
-    border:1px solid var(--line);
-    border-radius:12px;
-    font-size:13px;
-    color:var(--ink-faint);
+    display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px;
   }
-
-  /* ============================================================
-     STEPPER / ROADMAP
-     ============================================================ */
-  .stepper{
-    margin:26px 0 0;
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:0;
-    position:relative;
-  }
-  .step{
-    background:none; border:none; cursor:pointer;
-    display:flex; align-items:center; gap:10px;
-    padding:0 12px 0 0;
-    font-family:inherit; color:inherit; text-align:left;
-  }
-  .step:first-child{ padding-left:0; }
-  .step-node{
-    width:38px; height:38px; border-radius:50%;
-    background:linear-gradient(180deg, #ffffff, var(--surface-raised));
-    border:2px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--ink-faint);
-    position:relative; z-index:2; flex:none;
-    box-shadow:inset 0 1px 1px var(--bevel-hi), 0 1px 2px var(--bevel-lo);
-    transition:border-color .25s, background .25s, box-shadow .25s, color .25s;
-  }
-  .step-node svg{ width:17px; height:17px; }
-  .step[data-status="done"] .step-node,
-  .step[data-status="active"] .step-node{
-    border-color:var(--accent-strong);
-    color:var(--accent-strong);
-    background:linear-gradient(180deg, #ffffff, var(--accent-wash));
-  }
-  .step[aria-selected="true"] .step-node{
-    box-shadow:0 0 0 4px var(--accent-wash), inset 0 1px 1px rgba(255,255,255,.6);
-    background:var(--accent);
-    color:#ffffff;
-  }
-  .step-name{ font-family:var(--font-display); font-weight:700; font-size:12.5px; line-height:1.25; color:var(--ink); }
-
-  .stage-detail{
-    margin-top:24px;
+  .ask-item{
     background:var(--surface);
     border:1px solid var(--line);
     border-radius:16px;
-    padding:24px 28px;
-    box-shadow:var(--shadow-lift), inset 0 1px 0 var(--bevel-hi);
+    padding:20px 22px;
+    display:flex; gap:14px;
+    box-shadow:inset 0 1px 0 var(--bevel-hi);
   }
-  .stage-detail-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .stage-detail-head h3{ font-size:19px; }
+  .ask-num{ font-family:var(--font-mono); color:var(--accent-strong); font-size:13px; flex:none; padding-top:3px; }
+  .ask-item h3{ font-size:16.5px; line-height:1.3; margin:0 0 6px; }
+  .ask-item h3 .term{ font-family:var(--font-mono); font-weight:400; font-size:11px; letter-spacing:.04em; color:var(--ink-faint); white-space:nowrap; }
+  .ask-item p{ font-size:14.5px; color:var(--ink-muted); }
+
+  /* ============================================================
+     HOW THE WORK GOES — five stages, plain first, details folded
+     ============================================================ */
+  .stage-rows{ list-style:none; margin:24px 0 0; padding:0; border-top:1px solid var(--line); }
+  .stage-row{
+    display:grid; grid-template-columns:44px minmax(0,1fr); gap:16px;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .stage-mark{
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:13px; font-weight:600;
+    color:var(--ink-faint);
+    border:2px solid var(--line);
+    background:linear-gradient(180deg, #ffffff, var(--surface-raised));
+    box-shadow:inset 0 1px 1px var(--bevel-hi), 0 1px 2px var(--bevel-lo);
+  }
+  .stage-mark svg{ width:16px; height:16px; }
+  .stage-row.done .stage-mark{ border-color:var(--accent-strong); color:var(--accent-strong); background:linear-gradient(180deg, #ffffff, var(--accent-wash)); }
+  .stage-row.active .stage-mark{ border-color:var(--accent); background:var(--accent); color:#ffffff; box-shadow:0 0 0 5px var(--accent-wash); }
+  .stage-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .stage-name{ font-family:var(--font-display); font-weight:700; font-size:17px; color:var(--ink); }
+  .stage-row.upcoming .stage-name{ color:var(--ink-muted); }
   .stage-pill{
     font-family:var(--font-mono); font-size:11px; letter-spacing:.07em; text-transform:uppercase;
     padding:4px 11px; border-radius:20px; white-space:nowrap;
@@ -410,8 +339,24 @@
   .stage-pill.done{ background:var(--teal-wash); color:var(--teal); }
   .stage-pill.active{ background:var(--accent-wash); color:var(--accent-strong); }
   .stage-pill.upcoming{ background:var(--surface-raised); color:var(--ink-faint); }
-  .stage-detail-text{ margin-top:10px; color:var(--ink-muted); font-size:15px; max-width:620px; }
-  .stage-list{ list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .stage-plain{ margin-top:4px; max-width:620px; font-size:15px; color:var(--ink-muted); }
+  .stage-row.active .stage-plain{ color:var(--ink); }
+
+  .stage-more{ margin-top:8px; }
+  .stage-more summary{
+    display:inline-flex; align-items:center; gap:6px;
+    list-style:none; cursor:pointer;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--accent-strong);
+    padding:4px 0;
+  }
+  .stage-more summary::-webkit-details-marker{ display:none; }
+  .stage-more summary .chev{ width:10px; height:10px; transition:transform .25s; }
+  .stage-more[open] summary .chev{ transform:rotate(180deg); }
+  .stage-more .when-open{ display:none; }
+  .stage-more[open] .when-open{ display:inline; }
+  .stage-more[open] .when-closed{ display:none; }
+  .stage-list{ list-style:none; margin:10px 0 4px; padding:0; display:flex; flex-direction:column; gap:7px; }
   .stage-list li{ display:flex; gap:10px; font-size:14px; color:var(--ink); }
   .stage-list li::before{ content:"—"; color:var(--accent-strong); flex:none; }
 
@@ -445,6 +390,24 @@
     margin-top:auto; padding-top:10px; border-top:1px dashed var(--line);
     font-family:var(--font-mono); font-size:11.5px; color:var(--accent-strong);
   }
+
+  /* ============================================================
+     DETAILS TOGGLE (progressive disclosure for technical blocks)
+     ============================================================ */
+  .details-toggle{
+    margin-top:18px;
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--accent-strong);
+    background:var(--surface); border:1px solid var(--line);
+    padding:9px 16px; border-radius:20px;
+    cursor:pointer;
+    box-shadow:inset 0 1px 0 var(--bevel-hi);
+    transition:border-color .2s, background .2s;
+  }
+  .details-toggle:hover{ border-color:var(--accent-dim); background:var(--surface-raised); }
+  .details-toggle .chev{ width:11px; height:11px; transition:transform .25s; }
+  .details-toggle[aria-expanded="true"] .chev{ transform:rotate(180deg); }
 
   /* ============================================================
      CHANNEL CHART
@@ -483,6 +446,7 @@
     width:0%;
     transition:width 1.1s cubic-bezier(.2,.7,.3,1);
   }
+  .row.muted .bar-fill{ background:linear-gradient(90deg, rgba(107,114,120,.35), var(--ink-faint)); }
   .row.revealed .bar-fill{ width:var(--val,0%); }
   .row-tags{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right; }
   .status-chip{
@@ -493,35 +457,80 @@
   .status-chip.good{ color:var(--good); background:rgba(21,122,58,.12); }
   .status-chip.warning{ color:var(--warning); background:rgba(138,91,6,.12); }
   .status-chip.serious{ color:var(--serious); background:rgba(161,58,34,.12); }
+  .status-chip.muted{ color:var(--ink-muted); background:var(--surface-raised); }
   .row-note{ font-family:var(--font-mono); font-size:9.5px; color:var(--ink-faint); }
   .chart-foot{ margin-top:16px; font-size:12.5px; color:var(--ink-faint); }
 
   /* ============================================================
-     NEXT STEPS
+     ABOUT THE FILM (quiet, at the bottom)
      ============================================================ */
-  .ask-grid{
-    margin-top:22px;
-    display:grid; grid-template-columns:1fr 1fr; gap:2px;
-    background:var(--line);
-    border-radius:14px; overflow:hidden;
-    border:1px solid var(--line);
+  .about{ padding-block:8px 24px; }
+  .about-inner{
+    border-top:1px solid var(--line);
+    padding-top:26px;
+    display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px 40px; align-items:start;
   }
-  .ask-item{ background:var(--surface); padding:18px 20px; display:flex; gap:12px; }
-  .ask-item.wide{ grid-column:1 / -1; }
-  .ask-num{ font-family:var(--font-mono); color:var(--accent-strong); font-size:13px; flex:none; }
-  .ask-item h4{ font-family:var(--font-display); font-size:14px; margin:0 0 4px; }
-  .ask-item p{ font-size:13px; color:var(--ink-muted); }
+  .about-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+  .about-logline{ margin-top:6px; max-width:520px; font-size:16px; color:var(--ink-muted); }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:26px; }
+  .meta-item{ display:flex; flex-direction:column; gap:4px; }
+  .meta-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+  .meta-value{ font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--ink); }
 
-  .deadline-strip{
-    margin-top:24px;
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
-    padding:18px 24px;
-    border-radius:14px;
-    background:linear-gradient(120deg, rgba(44,110,147,.10), rgba(44,122,112,.07));
-    border:1px solid var(--accent-dim);
+  /* ============================================================
+     VIEW PANELS (report / devlog — switched by quiet links)
+     ============================================================ */
+  .view-panel{ display:none; }
+  .view-panel.active{ display:block; }
+
+  .devlog-entry{ padding-top:4px; }
+  .devlog-link{
+    display:inline-flex; align-items:center; gap:10px;
+    background:none; border:none; cursor:pointer;
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--ink-faint);
+    padding:8px 0;
+    transition:color .2s;
   }
-  .deadline-strip .big{ font-family:var(--font-display); font-size:16.5px; }
-  .deadline-strip .small{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); margin-top:3px; }
+  .devlog-link:hover{ color:var(--accent-strong); }
+  .devlog-count{ color:var(--ink-faint); font-size:10px; }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    background:none; border:none; cursor:pointer;
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--accent-strong); padding:4px 0; margin-bottom:14px;
+  }
+  .back-link:hover{ color:var(--accent); }
+
+  /* ============================================================
+     DEVLOG
+     ============================================================ */
+  .devlog-list{
+    margin:24px 0 0; padding:0; list-style:none;
+    font-family:var(--font-mono); font-size:13px; line-height:1.7; color:var(--ink-muted);
+    counter-reset:devlog;
+    border-top:1px solid var(--line-soft);
+  }
+  .devlog-list li{
+    counter-increment:devlog;
+    padding:11px 4px 11px 44px;
+    border-bottom:1px solid var(--line-soft);
+    position:relative;
+  }
+  .devlog-list li::before{
+    content:counter(devlog, decimal-leading-zero);
+    position:absolute; left:4px; top:11px;
+    color:var(--accent-strong); font-weight:600;
+  }
+  .devlog-note{
+    margin-top:22px;
+    padding:14px 18px;
+    background:var(--surface-raised);
+    border:1px solid var(--line);
+    border-radius:12px;
+    font-size:13px;
+    color:var(--ink-faint);
+  }
 
   /* ============================================================
      FOOTER
@@ -533,16 +542,10 @@
   }
   .site-footer p{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); letter-spacing:.03em; }
 
-  /* ============================================================
-     REVEAL-ON-SCROLL (progressive enhancement)
-     ============================================================ */
-  .pre-reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
-  .pre-reveal.in-view{ opacity:1; transform:translateY(0); }
-
   @media (prefers-reduced-motion: reduce){
-    .wave-bar, .bar-fill, .stepper-track-fill, .pre-reveal, .case-card{ transition:none !important; }
+    .wave-bar, .bar-fill, .case-card, .details-toggle .chev, .stage-more summary .chev{ transition:none !important; }
     .wave-bar{ transform:scaleY(1) !important; }
-    .blob-a, .blob-b, .blob-c, .tt-sheen{ animation:none !important; }
+    .blob-a, .blob-b, .blob-c, .tt-sheen, .seg.active .seg-bar::after{ animation:none !important; }
   }
 
   /* ============================================================
@@ -550,28 +553,38 @@
      ============================================================ */
   @media (max-width:820px){
     .container{ padding:0 20px; }
-    .hero{ padding-top:40px; }
-    .hero-wave{ height:64px; margin-top:24px; padding:0 20px; }
-    .section{ padding:40px 0; }
+    .hero{ padding-top:32px; }
+    .status-panel{ grid-template-columns:1fr; padding:24px 22px 24px; margin-top:24px; gap:0; }
+    .status-main{ padding-right:0; }
+    .status-days{
+      margin-top:20px; padding:18px 0 0;
+      border-left:none; border-top:1px solid var(--line);
+      text-align:left;
+      display:flex; align-items:center; gap:14px;
+    }
+    .days-num{ font-size:52px; }
+    .days-label{ margin-top:0; }
+    .hero-wave{ height:44px; margin-top:22px; padding:0 20px; }
+    .section{ padding-block:40px; }
+    .asks{ padding-top:36px; }
     .wave-divider{ height:28px; }
+    .ask-grid{ grid-template-columns:1fr; }
     .case-grid{ grid-template-columns:1fr; gap:12px; }
-    .stepper{ grid-template-columns:1fr; gap:14px; }
-    .stepper-track{ display:none; }
-    .step{ padding:0; }
-    .stage-detail{ padding:20px; }
     .chart-card{ padding:18px 18px; }
     .row{ grid-template-columns:1fr; row-gap:8px; padding:12px 0; }
     .row-tags{ align-items:flex-start; text-align:left; flex-direction:row; flex-wrap:wrap; }
-    .ask-grid{ grid-template-columns:1fr; }
+    .about-inner{ grid-template-columns:1fr; }
     .meta-row{ gap:16px 28px; }
     .devlog-list{ font-size:12.5px; }
     .devlog-list li{ padding-left:38px; }
   }
   @media (max-width:480px){
     body{ font-size:15px; }
-    .film-title{ font-size:clamp(40px,15vw,60px); }
-    .countdown-digits{ gap:6px; }
-    .cd-colon{ font-size:18px; }
+    .seg-label{ font-size:10px; }
+    .segments{ gap:4px; }
+    .status-panel{ padding:22px 18px 22px; }
+    .stage-row{ grid-template-columns:36px minmax(0,1fr); gap:12px; }
+    .stage-mark{ width:32px; height:32px; }
   }
 </style>
 
@@ -581,7 +594,7 @@
 
 </head><body><header class="hero">
   <div class="container wide hero-inner">
-    <p class="eyebrow">Звуковой пост-продакшн · дневник</p>
+    <p class="eyebrow">Работа над звуком фильма</p>
     <div class="title-stage">
       <div class="title-glow-bg" aria-hidden="true">
         <span class="blob blob-a"></span>
@@ -594,69 +607,165 @@
         <span class="tt-sheen" aria-hidden="true">НЕ СКУЛИ</span>
       </h1>
     </div>
-    <p class="hero-sub">Один день Ани — от голоса, который слышит только она, до воя, который услышат все. Дневник звука фильма.</p>
-    <div class="meta-row">
-      <div class="meta-item"><span class="meta-label">Хронометраж</span><span class="meta-value">≈ 20 мин</span></div>
-      <div class="meta-item"><span class="meta-label">Жанр</span><span class="meta-value">Драма</span></div>
-      <div class="meta-item"><span class="meta-label">Судьба</span><span class="meta-value">Фестивали</span></div>
-    </div>
-    <div class="countdown">
-      <span class="countdown-label">До сдачи · 15.10.2026</span>
-      <div class="countdown-digits" id="countdown" aria-live="polite">
-        <div class="cd-block"><span class="cd-num" id="cd-days">—</span><span class="cd-unit">дн</span></div>
-        <span class="cd-colon">:</span>
-        <div class="cd-block"><span class="cd-num" id="cd-hrs">—</span><span class="cd-unit">ч</span></div>
-        <span class="cd-colon">:</span>
-        <div class="cd-block"><span class="cd-num" id="cd-min">—</span><span class="cd-unit">м</span></div>
-        <span class="cd-colon">:</span>
-        <div class="cd-block"><span class="cd-num" id="cd-sec">—</span><span class="cd-unit">с</span></div>
+
+    <section class="status-panel" aria-label="Где сейчас работа">
+      <div class="status-main">
+        <p class="status-kicker">Сейчас</p>
+        <p class="status-big">Этап 2 <span>из 5</span></p>
+        <ol class="segments" aria-label="Пять этапов работы">
+          <li class="seg done"><span class="seg-bar"></span><span class="seg-label">Подго&shy;товка<span class="sr"> — готово</span></span></li>
+          <li class="seg active" style="--fill:75%"><span class="seg-bar"></span><span class="seg-label">Диалог<span class="sr"> — идёт сейчас</span></span></li>
+          <li class="seg"><span class="seg-bar"></span><span class="seg-label">Фон и шумы<span class="sr"> — впереди</span></span></li>
+          <li class="seg"><span class="seg-bar"></span><span class="seg-label">Музыка<span class="sr"> — впереди</span></span></li>
+          <li class="seg"><span class="seg-bar"></span><span class="seg-label">Финал<span class="sr"> — впереди</span></span></li>
+        </ol>
+        <p class="status-now">Голоса героев собраны и почищены — сейчас довожу громкость и голос мамы.</p>
       </div>
-    </div>
+      <div class="status-days">
+        <p class="days-num" id="daysNum">9</p>
+        <div class="days-text">
+          <p class="days-label" id="daysLabel">дней до сдачи</p>
+          <p class="days-date">15 октября</p>
+        </div>
+      </div>
+    </section>
   </div>
   <div class="hero-wave" id="heroWave" aria-hidden="true"></div>
 </header>
 
 <main class="view-panel active" id="viewReport">
 
-  <section class="status-band container wide">
-    <p class="status-kicker">Коротко</p>
-    <p class="status-line">Этап <strong>2 из 5</strong> — собираю диалог по всем сценам фильма.</p>
-    <div class="status-track"><div class="status-fill" style="--sw:30%"></div></div>
-  </section>
-
-  <section class="section roadmap container wide" id="roadmap">
-    <p class="section-eyebrow">Путь звука</p>
-    <h2 class="section-title">Пять этапов — от площадки до фестиваля</h2>
-
-    <div class="stepper" id="stepper" role="tablist" aria-label="Этапы работы">
-      <!-- steps injected by JS -->
+  <section class="section asks container wide" id="asks">
+    <h2 class="section-title">Что нужно от тебя</h2>
+    <p class="section-lede">Два решения — всё остальное я делаю сам.</p>
+    <div class="ask-grid">
+      <div class="ask-item">
+        <span class="ask-num">01</span>
+        <div>
+          <h3>Монтаж окончательный? <span class="term">picture lock</span></h3>
+          <p>Подтверди, что монтаж картинки больше не меняется. Весь звук я подгоняю под эту версию — любая перестановка потом сдвинет и его.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <span class="ask-num">02</span>
+        <div>
+          <h3>Нужна ли версия без мата?</h3>
+          <p>По сценарию мата нет, поэтому отдельную «чистую» версию я сейчас не делаю. Если она понадобится, например для фестиваля, — скажи.</p>
+        </div>
+      </div>
     </div>
-
-    <div class="stage-detail pre-reveal" id="stageDetail"></div>
   </section>
 
   <div class="wave-divider" id="divider1" aria-hidden="true"></div>
 
+  <section class="section stages container wide" id="stages">
+    <h2 class="section-title">Как идёт работа</h2>
+    <ol class="stage-rows">
+      <li class="stage-row done">
+        <span class="stage-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        <div class="stage-body">
+          <div class="stage-head"><h3 class="stage-name">Подготовка</h3><span class="stage-pill done">Готово</span></div>
+          <p class="stage-plain">Разобрал весь звук со съёмок: что, где и на какой микрофон записано.</p>
+          <details class="stage-more">
+            <summary><span class="when-closed">Подробнее</span><span class="when-open">Свернуть</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <ul class="stage-list">
+              <li>Монтажная карта: 73 позиции — секунда фильма привязана к дублю со съёмок</li>
+              <li>Шот-лог 95 кадров + техпрофиль 6 каналов (362 дубля)</li>
+              <li>Финальный сценарий разобран: 110 реплик привязаны к таймкоду и персонажу</li>
+              <li>Сессия Reaper подготовлена: дорожки, 110 маркеров реплик, карта каналов в заметках</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="stage-row active">
+        <span class="stage-mark" aria-hidden="true">2</span>
+        <div class="stage-body">
+          <div class="stage-head"><h3 class="stage-name">Диалог</h3><span class="stage-pill active">Идёт сейчас</span></div>
+          <p class="stage-plain">Голоса героев собраны и почищены. Сейчас довожу громкость и голос мамы-призрака.</p>
+          <details class="stage-more">
+            <summary><span class="when-closed">Подробнее</span><span class="when-open">Свернуть</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <ul class="stage-list">
+              <li>Готово: монтаж диалога закрыт — все 11 сцен прослушаны, недостающие реплики возвращены из исходников</li>
+              <li>Готово: у каждого героя своя дорожка, под ними общий бум сцены и тишина помещения (room tone) в паузах</li>
+              <li>Готово: перегруз (clipping) на 10 кусках петличек вылечен в RX 11 De-clip</li>
+              <li>Готово: на всех голосах срез низа и чистка шума (RX 11 Voice De-noise), сила подобрана на слух</li>
+              <li>Готово: первый проход по громкости — разница между тихими и громкими репликами сократилась с 14.6 до 9.3 dB</li>
+              <li>Готово: черновой рендер всего фильма с диалогом</li>
+              <li>Сейчас: проверяю громкость на слух — мама на кладбище, крики Наташи</li>
+              <li>Далее: отдельная обработка голоса мамы-призрака</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="stage-row upcoming">
+        <span class="stage-mark" aria-hidden="true">3</span>
+        <div class="stage-body">
+          <div class="stage-head"><h3 class="stage-name">Фон и шумы</h3><span class="stage-pill upcoming">Впереди</span></div>
+          <p class="stage-plain">Добавлю звуки мест — двор, кладбище, кухня, — шаги, двери и финальный вой.</p>
+          <details class="stage-more">
+            <summary><span class="when-closed">Подробнее</span><span class="when-open">Свернуть</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <ul class="stage-list">
+              <li>Атмосферы: ванная, кухня, двор, кладбище, площадка</li>
+              <li>Foley: шаги, посуда, дверь, зажигалка</li>
+              <li>Дизайн кульминации — вой «А-А-О-О-У-У-У»</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="stage-row upcoming">
+        <span class="stage-mark" aria-hidden="true">4</span>
+        <div class="stage-body">
+          <div class="stage-head"><h3 class="stage-name">Музыка</h3><span class="stage-pill upcoming">Впереди</span></div>
+          <p class="stage-plain">Подложу музыку и соберу звук каждой сцены вместе.</p>
+          <details class="stage-more">
+            <summary><span class="when-closed">Подробнее</span><span class="when-open">Свернуть</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <ul class="stage-list">
+              <li>Предмиксы по сценам</li>
+              <li>Музыкальные решения по драматургии дня</li>
+              <li>Точка титровой музыки</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="stage-row upcoming">
+        <span class="stage-mark" aria-hidden="true">5</span>
+        <div class="stage-body">
+          <div class="stage-head"><h3 class="stage-name">Финал</h3><span class="stage-pill upcoming">Впереди</span></div>
+          <p class="stage-plain">Сведу всё вместе и подготовлю звук к фестивальному показу.</p>
+          <details class="stage-more">
+            <summary><span class="when-closed">Подробнее</span><span class="when-open">Свернуть</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <ul class="stage-list">
+              <li>Баланс диалог / фон / музыка</li>
+              <li>Мастеринг под фестивальный показ</li>
+              <li>Версия без мата — только если понадобится</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <div class="wave-divider" id="divider2" aria-hidden="true"></div>
+
   <section class="section findings container wide" id="findings">
-    <p class="section-eyebrow">Находки по пути</p>
     <h2 class="section-title">Три вещи, которые я уже нашёл</h2>
 
     <div class="case-grid">
-      <article class="case-card pre-reveal">
+      <article class="case-card">
         <span class="case-tag">№1 · монтаж</span>
         <h3>Склейки, которых не было на бумаге</h3>
         <p>Автодетект насчитал 80 планов. Я прошёл фильм кадр за кадром — и нашёл, что два плана на деле склеены из нескольких разных сцен подряд.</p>
         <span class="case-fact">Кадр 1 → 5 сцен подряд · кадр 80 → 2–3 сцены</span>
       </article>
 
-      <article class="case-card pre-reveal">
+      <article class="case-card">
         <span class="case-tag">№2 · концепция</span>
         <h3>Мама, которую слышит только Аня</h3>
         <p>Мама Ани — призрак, которого видит и слышит только она. Значит, её голос — отдельный субъективный слой, а не обычный звук сцены.</p>
         <span class="case-fact">Заложено в план монтажа диалога</span>
       </article>
 
-      <article class="case-card pre-reveal">
+      <article class="case-card">
         <span class="case-tag">№3 · диагностика</span>
         <h3>На каждую реплику — свой микрофон</h3>
         <p>Просчитал чистоту сигнала по всем 6 каналам для каждой из 109 реплик и перепроверил это вторым независимым способом — карты совпали.</p>
@@ -665,12 +774,11 @@
     </div>
   </section>
 
-  <div class="wave-divider" id="divider2" aria-hidden="true"></div>
+  <div class="wave-divider" id="divider3" aria-hidden="true"></div>
 
   <section class="section channels container wide" id="channels">
-    <p class="section-eyebrow">Диагностика записи</p>
-    <h2 class="section-title">Здоровье шести каналов</h2>
-    <p class="section-lede">Если коротко: с записью всё в порядке, кроме двух петличек крупного плана — их чищу в первую очередь.</p>
+    <h2 class="section-title">Как записался звук на площадке</h2>
+    <p class="section-lede">Если коротко: микрофоны, с которых я собираю голоса, записались хорошо. Перегружены только каналы 1–2 — это общий микс с рекордера, в фильм он идёт только как подстраховка.</p>
 
     <button class="details-toggle" type="button" id="channelsToggle" aria-expanded="false" aria-controls="chartCard">
       <span class="label">Показать техническую диагностику</span>
@@ -681,51 +789,31 @@
       <div class="chart-legend">
         <span><span class="dot" style="background:var(--teal)"></span> длина — чистота дорожки</span>
         <span><span class="dot" style="background:var(--good)"></span> в норме</span>
-        <span><span class="dot" style="background:var(--warning)"></span> внимание</span>
-        <span><span class="dot" style="background:var(--serious)"></span> приоритет чистки</span>
+        <span><span class="dot" style="background:var(--warning)"></span> проверить</span>
+        <span><span class="dot" style="background:var(--ink-faint)"></span> только подстраховка</span>
       </div>
       <div id="chartRows"></div>
       <p class="chart-foot">Из 29 дублей с пометкой «брак по звуку» в монтаж попало только 4.</p>
     </div>
   </section>
 
-  <div class="wave-divider" id="divider3" aria-hidden="true"></div>
-
-  <section class="section next container wide" id="next">
-    <p class="section-eyebrow">Что дальше</p>
-    <h2 class="section-title">Нужно несколько решений</h2>
-
-    <div class="ask-grid">
-      <div class="ask-item pre-reveal">
-        <span class="ask-num">01</span>
-        <div><h4>Picture lock</h4><p>Подтвердить, что монтаж картины зафиксирован — вся дальнейшая работа со звуком строится на этой версии.</p></div>
-      </div>
-      <div class="ask-item pre-reveal">
-        <span class="ask-num">02</span>
-        <div><h4>Границы кадров 1 и 80</h4><p>Пересчитывать ли раскадровку под скрытые склейки (см. находку №1)?</p></div>
-      </div>
-      <div class="ask-item pre-reveal">
-        <span class="ask-num">03</span>
-        <div><h4>Нужен ли alt-cut</h4><p>Нужна ли отдельная версия микса без мата?</p></div>
-      </div>
-      <div class="ask-item pre-reveal">
-        <span class="ask-num">04</span>
-        <div><h4>Одно по-настоящему пустое место</h4><p>Собрал диалог по всем 11 сценам и нашёл один участок (~9 секунд, сцена у подъезда), где нет звука ни на одном микрофоне с площадки. Остальные похожие короткие паузы закрою сам тишиной той же комнаты — для этой пришли отдельную запись с площадки, если она есть, если нет — закрою её так же, своей тишиной.</p></div>
-      </div>
-    </div>
-
-    <div class="deadline-strip pre-reveal">
+  <section class="about container wide" aria-label="О фильме">
+    <div class="about-inner">
       <div>
-        <p class="big">Дедлайн — 15 октября 2026</p>
-        <p class="small">Этап 1 закрыт · идёт этап 2 из 5</p>
+        <p class="about-label">О фильме</p>
+        <p class="about-logline">Один день Ани — от голоса, который слышит только она, до воя, который услышат все.</p>
       </div>
-      <div class="meta-value" style="font-family:var(--font-mono); font-size:14px; color:var(--accent-strong);">Обновляется по ходу работы →</div>
+      <div class="meta-row">
+        <div class="meta-item"><span class="meta-label">Хронометраж</span><span class="meta-value">≈ 20 мин</span></div>
+        <div class="meta-item"><span class="meta-label">Жанр</span><span class="meta-value">Драма</span></div>
+        <div class="meta-item"><span class="meta-label">Судьба</span><span class="meta-value">Фестивали</span></div>
+      </div>
     </div>
   </section>
 
   <div class="devlog-entry container wide">
     <button class="devlog-link" type="button" id="openDevlog">
-      <span>Технический журнал</span><span class="devlog-count">87 записей</span><span aria-hidden="true">→</span>
+      <span>Технический журнал</span><span class="devlog-count">105 записей</span><span aria-hidden="true">→</span>
     </button>
   </div>
 
@@ -738,7 +826,7 @@
       Отчёт
     </button>
     <p class="section-eyebrow">Технический журнал</p>
-    <h2 class="section-title">Дневник разработчика</h2>
+    <h2 class="section-title" style="margin-top:8px">Дневник разработчика</h2>
     <p class="section-lede">Сплошной технический лог по работе со звуком фильма — всё по порядку, без дат, включая накаты и откаты.</p>
 
     <ol class="devlog-list">
@@ -829,6 +917,24 @@
       <li>Собрал реестр всех найденных дыр по звуку — разметил их region'ами «SOUND GAP» прямо в Reaper и разделил на те, что закрою сам тишиной помещения или атмосферой, и на единственное место без исходника вообще.</li>
       <li>Закрыл одну дыру (688.28–690.68, сцена 8) временным патчем — взял кусок не с чистого бума, а из общего микса с рекордера; пометил на будущее заменить на настоящую атмосферу балкона.</li>
       <li>Собрал общий статус сборки по всем 11 сценам и список того, что осталось по этапу диалога: прослушать каждую сцену, решить полярность по каждому куску отдельно, сгладить ступени уровня подложки между кусками и на стыках сцен, перенести чистку шума на чистовые дорожки, сделать отдельную обработку мамы-призрака.</li>
+      <li>Перепроверил 9-секундную «дыру» у подъезда (703.48–712.52) по целым исходным файлам, а не по клипам из AAF — звук там есть, монтажёр его просто вырезал; вернул «Молодец» и «Проверяй» с LAV 1, дыры больше нет.</li>
+      <li>Понял общее правило: исходные wav целые, а в AAF лежат только обрезанные монтажёром клипы — любую «дыру» сначала ищу в исходнике и только потом закрываю тишиной помещения.</li>
+      <li>Прогнал whisper по каждой реплике из диалогового листа на сведённом по сценам диалоге — почти все реплики на месте, на кладбище целиком ничего не потеряно, всё есть хотя бы на DX BOOM.</li>
+      <li>Нашёл, почему на кладбище казалось, что маминых реплик нет: фейдер DX MAMA стоял на −12 dB, и мама звучала примерно на 11 dB тише Ани; поднял её куски на кладбище на 8 dB.</li>
+      <li>Вернул срезанное начало маминой фразы «Ты без меня даже не можешь мою могилу найти» и кусок «И будут…» в сцене 4, который в AAF обрывался на склейке.</li>
+      <li>Сделал отдельную дорожку DX ROOMTONE и подложил тишину помещения в 12 пустых мест между дублями — из room tone той же сцены, по уровню соседних кусков бума.</li>
+      <li>Не нашёл на петличках «Но мы-то на Троицком» и «Любит. Не любит. Любит…» Наташи — похоже, на площадке они почти не записались; для «Любит…» возможен ADR.</li>
+      <li>Нашёл, что для второго дубля на карусели AAF ссылается на петличку Наташи из первого дубля с неверной синхронизацией; настоящую петлю нашёл по размеру файла (у всех файлов одного дубля он одинаковый) и вернул крики Наташи.</li>
+      <li>Добавил недостающие куски в сценах 2, 5, 7 и 10: «Аня, привет…», «Я не говорила, что ты истеричка», «Ммм, будешь?», «Пошли», «А вы можете хотя бы это? Свалить.»</li>
+      <li>Прослушал все 11 сцен целиком и закрыл монтаж диалога (DX edit lock) — всё на своих местах, сохранил снимок проекта.</li>
+      <li>Просканировал все 227 кусков петличек на clipping — нашёл 15, в работу взял 10 заметных.</li>
+      <li>Сделал под de-clip отдельные дорожки внутри папок Ани, Наташи и Папы: клиппованным кускам выставил gain 0 dB, а прежнюю громкость вернул огибающей после плагина — иначе RX 11 De-clip не видит настоящих срезанных вершин.</li>
+      <li>Поставил RX 11 De-clip (Quality High, Post-limiter Off) и разнёс настройки на все три дорожки через track template — первый раз template затёр содержимое дорожки Наташи; откатил и сделал по-другому: сначала увёл куски на пустую дорожку, потом применил template и вернул их.</li>
+      <li>Поймал на дорожке de-clip Папы чужие куски: вместо трёх реплик Папы там лежали дубли криков Наташи; удалил их и заново поставил Папу из исходника. Правило: после любого track template сверяю все затронутые дорожки.</li>
+      <li>Нашёл, почему мастер бился в 0 на крике Наташи на карусели: виноват не lav, а бум-подложка, которая стояла почти на 0 dB; опустил её на этом месте на 9–11 dB — пик суммы стал −6.2 dBFS вместо +0.6.</li>
+      <li>Поставил на дорожки всех героев срез низа (Pro-Q 4, 80 Hz, у Папы 70 Hz) и RX 11 Voice De-noise; силу шумодава подбирал на слух — у Ани сначала поставил 14 dB, потом снизил до 7: на 14 голос звучал агрессивно.</li>
+      <li>Выровнял громкость речи первым проходом по 143 кускам: цель −27 dBFS RMS, сдвиг только на половину отклонения, чтобы шёпот остался тише крика, — разброс уровня речи сузился с 14.6 до 9.3 dB.</li>
+      <li>Отрендерил черновик всего фильма только с диалогом (видео 960×540, звук AAC 256 kbps) через окно Render: рендер через MCP дал полностью тихий файл, так что больше им не рендерю; перегруз около 8:50–9:00 оставил под limiter на DX bus на этапе микса.</li>
     </ol>
 
     <p class="devlog-note">Это журнал только по работе со звуком фильма — сайт и его обновление сюда не входят.</p>
@@ -837,7 +943,7 @@
 
 <footer class="site-footer">
   <div class="container">
-    <p>«НЕ СКУЛИ» · дневник звука · обновлено 3 октября 2026</p>
+    <p>«НЕ СКУЛИ» · дневник звука · обновлено 6 октября 2026</p>
   </div>
 </footer>
 
@@ -862,146 +968,59 @@
     window.scrollTo({top:0, behavior: reduceMotion ? "auto" : "smooth"});
   });
 
+  /* ---------- days left (calendar days, Moscow date) ---------- */
+  function plural(n, one, few, many){
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  }
+  var mskNow = new Date(Date.now() + 3 * 3600000);
+  var todayMsk = Date.UTC(mskNow.getUTCFullYear(), mskNow.getUTCMonth(), mskNow.getUTCDate());
+  var daysLeft = Math.round((Date.UTC(2026, 9, 15) - todayMsk) / 86400000);
+  var daysNum = document.getElementById("daysNum");
+  var daysLabel = document.getElementById("daysLabel");
+  if (daysNum && daysLabel){
+    if (daysLeft > 0){
+      daysNum.textContent = String(daysLeft);
+      daysLabel.textContent = plural(daysLeft, "день", "дня", "дней") + " до сдачи";
+    } else if (daysLeft === 0){
+      daysNum.textContent = "0";
+      daysLabel.textContent = "сдача сегодня";
+    } else {
+      daysNum.hidden = true;
+      daysLabel.textContent = "срок сдачи";
+    }
+  }
+
   /* ---------- channel diagnostics: progressive disclosure ---------- */
   var channelsToggle = document.getElementById("channelsToggle");
   var chartCardEl = document.getElementById("chartCard");
   if (channelsToggle) channelsToggle.addEventListener("click", function(){
-    var isOpen = channelsToggle.getAttribute("aria-expanded") === "true";
-    var nowOpen = !isOpen;
+    var nowOpen = channelsToggle.getAttribute("aria-expanded") !== "true";
     channelsToggle.setAttribute("aria-expanded", String(nowOpen));
     channelsToggle.querySelector(".label").textContent = nowOpen ? "Скрыть техническую диагностику" : "Показать техническую диагностику";
     chartCardEl.hidden = !nowOpen;
     if (nowOpen){
-      chartCardEl.classList.add("in-view");
-      chartCardEl.querySelectorAll(".row").forEach(function(r){ r.classList.add("revealed"); });
+      var rows = chartCardEl.querySelectorAll(".row");
+      requestAnimationFrame(function(){
+        rows.forEach(function(r){ r.classList.add("revealed"); });
+      });
     }
   });
-
-  /* ---------- data ---------- */
-  var stages = [
-    {
-      status:"done",
-      short:"Подготовка",
-      full:"Подготовка и синхронизация",
-      pill:"Готово",
-      pillClass:"done",
-      text:"Связал финальный монтаж с исходными дублями, разобрал акустику локаций, проверил здоровье всех каналов записи и разобрал финальный сценарий.",
-      list:[
-        "Монтажная карта: 73 позиции — секунда фильма привязана к дублю со съёмок",
-        "Шот-лог 95 кадров + техпрофиль 6 каналов (362 дубля)",
-        "Финальный сценарий разобран: 110 реплик привязаны к таймкоду и персонажу",
-        "Сессия Reaper подготовлена: дорожки, 110 маркеров реплик, карта каналов в заметках"
-      ],
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8l16-3M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6"/><path d="M8 6.6l2 2.6M13 5.7l2 2.6"/></svg>'
-    },
-    {
-      status:"active",
-      short:"Диалог",
-      full:"Диалог: монтаж и реставрация",
-      pill:"В работе",
-      pillClass:"active",
-      text:"Собрал черновую сборку диалога по всем 11 сценам фильма: в каждой сцене бум идёт общей подложкой, а на каждого персонажа — своя дорожка с его репликами. Нашёл и собрал в один список все места, где в материале реально не хватает звука. Осталось пройти каждую сцену на слух, закрыть эти места атмосферой и донастроить технические детали.",
-      list:[
-        "Готово: рекомендация микрофона на все 109 реплик (SNR по 6 каналам, сверено 2 методами)",
-        "Готово: 4 дорожки под персонажей (Аня/Мама/Наташа/Папа) созданы и раскрашены в Reaper",
-        "Готово: звук помещения (room tone) найден для всех 11 сцен — своя тишина под каждую локацию, с трёх микрофонов",
-        "Готово: чищу сетевой гул на буме (50 Гц) — уже включено и работает",
-        "Готово: подготовил чистку шума и лёгкого шелеста на петличках — включаю точечно, где услышу на слух",
-        "Готово: собрал черновую сборку диалога по всем 11 сценам — подложка из бума плюс отдельная дорожка на каждого персонажа",
-        "Готово: собрал список всех мест, где в материале не хватает звука — почти всё закрою сам атмосферой и тишиной помещения",
-        "В работе: прохожу каждую сцену на слух и донастраиваю технические детали — полярность, уровни, перенос чистки шума на чистовые дорожки",
-        "Далее: отдельная обработка реплик «мамы-призрака», финальная проверка на слух"
-      ],
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 12h2l2-5 3 10 3-14 2 9 2-5h2"/></svg>'
-    },
-    {
-      status:"upcoming",
-      short:"Звук. мир",
-      full:"Звуковой мир: фон, фоли, дизайн",
-      pill:"Впереди",
-      pillClass:"upcoming",
-      text:"Атмосфера каждой локации, шаги и бытовые звуки (foley), дизайн кульминации — воя на площадке в сумерках.",
-      list:[
-        "Атмосферы: ванная, кухня, двор, кладбище, площадка",
-        "Foley: шаги, посуда, дверь, зажигалка",
-        "Дизайн кульминации — вой «А-А-О-О-У-У-У»"
-      ],
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.6"/><circle cx="12" cy="12" r="6.4" opacity=".6"/><circle cx="12" cy="12" r="10" opacity=".3"/></svg>'
-    },
-    {
-      status:"upcoming",
-      short:"Музыка",
-      full:"Музыка и предмиксы",
-      pill:"Впереди",
-      pillClass:"upcoming",
-      text:"Собираю диалог, фон и дизайн в предмиксы по сценам, подкладываю музыку.",
-      list:[
-        "Предмиксы по сценам",
-        "Музыкальные решения по драматургии дня",
-        "Точка титровой музыки"
-      ],
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>'
-    },
-    {
-      status:"upcoming",
-      short:"Финал",
-      full:"Финальный микс и мастеринг",
-      pill:"Финиш",
-      pillClass:"upcoming",
-      text:"Финальная балансировка под фестивальный показ — и, если нужно, версия без мата.",
-      list:[
-        "Баланс диалог / фон / музыка",
-        "Мастеринг под фестивальный показ",
-        "Опционально — цензурированная версия"
-      ],
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5v14M12 5v14M19 5v14"/><circle cx="5" cy="9" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="7" r="1.6" fill="currentColor" stroke="none"/></svg>'
-    }
-  ];
 
   var channels = [
-    {n:"Канал 1", note:"петличка, крупный план", val:2,  status:"serious", label:"приоритет чистки", detail:"клиппинг почти везде"},
-    {n:"Канал 2", note:"петличка, крупный план", val:6,  status:"serious", label:"приоритет чистки", detail:"клиппинг у 84% дублей"},
-    {n:"Канал 3", note:"бум (MKH-416)", val:95, status:"good", label:"чищу гул — уже включено", detail:"чище всех, 50 Гц под контролем"},
-    {n:"Канал 4", note:"петличка", val:78, status:"good",    label:"в норме", detail:""},
-    {n:"Канал 5", note:"петличка", val:68, status:"good",    label:"в норме", detail:""},
-    {n:"Канал 6", note:"петличка, мало материала, 62 мин",  val:84, status:"warning", label:"проверить выпадения", detail:""}
+    {n:"Канал 1", note:"микс с рекордера (L)", val:2,  status:"muted",   label:"только подстраховка", detail:"clipping почти везде"},
+    {n:"Канал 2", note:"микс с рекордера (R)", val:6,  status:"muted",   label:"только подстраховка", detail:"clipping у 84% дублей"},
+    {n:"Канал 3", note:"бум (MKH-416)",        val:95, status:"good",    label:"чищу гул — уже включено", detail:"чище всех, 50 Гц под контролем"},
+    {n:"Канал 4", note:"петличка",             val:78, status:"good",    label:"в норме", detail:""},
+    {n:"Канал 5", note:"петличка",             val:68, status:"good",    label:"в норме", detail:""},
+    {n:"Канал 6", note:"петличка, мало материала, 62 мин", val:84, status:"warning", label:"проверить выпадения", detail:""}
   ];
-
-  /* ---------- stepper ---------- */
-  var stepperEl = document.getElementById("stepper");
-  var detailEl = document.getElementById("stageDetail");
-
-  stages.forEach(function(s, i){
-    var btn = document.createElement("button");
-    btn.className = "step";
-    btn.type = "button";
-    btn.setAttribute("role","tab");
-    btn.setAttribute("data-status", s.status);
-    btn.setAttribute("aria-selected", i === 1 ? "true" : "false");
-    btn.innerHTML =
-      '<span class="step-node">'+ s.icon +'</span>' +
-      '<span class="step-name">'+ s.short +'</span>';
-    btn.addEventListener("click", function(){ selectStage(i); });
-    stepperEl.appendChild(btn);
-  });
-
-  function selectStage(i){
-    var buttons = stepperEl.querySelectorAll(".step");
-    buttons.forEach(function(b,idx){ b.setAttribute("aria-selected", idx===i ? "true":"false"); });
-    var s = stages[i];
-    detailEl.innerHTML =
-      '<div class="stage-detail-head"><h3>Этап '+(i+1)+' · '+ s.full +'</h3>' +
-      '<span class="stage-pill '+ s.pillClass +'">'+ s.pill +'</span></div>' +
-      '<p class="stage-detail-text">'+ s.text +'</p>' +
-      '<ul class="stage-list">'+ s.list.map(function(li){ return "<li>"+li+"</li>"; }).join("") +'</ul>';
-  }
-  selectStage(1);
-
-  /* ---------- channel chart ---------- */
   var rowsEl = document.getElementById("chartRows");
   channels.forEach(function(c){
     var row = document.createElement("div");
-    row.className = "row";
+    row.className = "row" + (c.status === "muted" ? " muted" : "");
     row.style.setProperty("--val", c.val + "%");
     row.innerHTML =
       '<div class="row-label">'+ c.n +'<small>'+ c.note +'</small></div>' +
@@ -1015,13 +1034,13 @@
 
   /* ---------- wave bars (hero + dividers) ---------- */
   function buildWave(container, count, envelope, cssClass){
+    if (!container) return;
     container.innerHTML = "";
     for (var i=0;i<count;i++){
       var t = i/(count-1);
-      var h = envelope(t);
       var bar = document.createElement("div");
-      bar.className = cssClass || "wave-bar";
-      bar.style.height = Math.max(3, h) + "%";
+      bar.className = cssClass;
+      bar.style.height = Math.max(3, envelope(t)) + "%";
       container.appendChild(bar);
     }
   }
@@ -1035,51 +1054,15 @@
   function calmEnvelope(t){
     return 14 + Math.abs(Math.sin(t*22))*10 + Math.sin(t*7)*4;
   }
-
   var heroWave = document.getElementById("heroWave");
   var isSmall = window.innerWidth < 640;
   buildWave(heroWave, isSmall ? 56 : 90, heroEnvelope, "wave-bar");
-
   ["divider1","divider2","divider3"].forEach(function(id){
-    var el = document.getElementById(id);
-    buildWave(el, isSmall ? 30 : 46, calmEnvelope, "dbar");
+    buildWave(document.getElementById(id), isSmall ? 30 : 46, calmEnvelope, "dbar");
   });
-
   requestAnimationFrame(function(){
-    requestAnimationFrame(function(){ heroWave.classList.add("revealed"); });
+    requestAnimationFrame(function(){ if (heroWave) heroWave.classList.add("revealed"); });
   });
-
-  /* ---------- countdown ---------- */
-  var deadline = new Date("2026-10-15T00:00:00+03:00").getTime();
-  var dEl = document.getElementById("cd-days"),
-      hEl = document.getElementById("cd-hrs"),
-      mEl = document.getElementById("cd-min"),
-      sEl = document.getElementById("cd-sec");
-  function pad(n){ return String(n).padStart(2,"0"); }
-  function tick(){
-    var diff = deadline - Date.now();
-    if (diff < 0) diff = 0;
-    var days = Math.floor(diff/86400000);
-    var hrs = Math.floor((diff%86400000)/3600000);
-    var min = Math.floor((diff%3600000)/60000);
-    var sec = Math.floor((diff%60000)/1000);
-    dEl.textContent = pad(days); hEl.textContent = pad(hrs); mEl.textContent = pad(min); sEl.textContent = pad(sec);
-  }
-  tick();
-  setInterval(tick, 1000);
-
-  /* ---------- scroll reveal (progressive enhancement) ---------- */
-  if ("IntersectionObserver" in window && !reduceMotion){
-    var targets = document.querySelectorAll(".pre-reveal");
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (e.isIntersecting){ e.target.classList.add("in-view"); io.unobserve(e.target); }
-      });
-    }, {threshold:0.15, rootMargin:"0px 0px -60px 0px"});
-    targets.forEach(function(t){ io.observe(t); });
-  } else {
-    document.querySelectorAll(".pre-reveal").forEach(function(t){ t.classList.add("in-view"); });
-  }
 })();
 </script>
 </body></html>
